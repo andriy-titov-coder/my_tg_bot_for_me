@@ -85,8 +85,12 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_message = await send_text(update, context, "...")
         try:
             response = await chatgpt_service.add_message(message_text)
-            buttons = {'start': '⬅️ Повернутись у головне меню'}
-            await send_text_buttons(update, context, response, buttons)
+            buttons = {
+                "talk": "⬅️ Обрати іншу особистість",
+                "start": "⬅️ Повернутись у головне меню"
+            }
+            personality_name = personality.replace("talk_", "").replace("_", " ").title()
+            await send_text_buttons(update, context, f"{personality_name}: {response}", buttons)
         except Exception as e:
             logger.error(f"Помилка при отриманні відповіді від ChatGPT: {e}")
             await send_text(update, context, "Виникла помилка при обробці вашого повідомлення.")
@@ -159,9 +163,11 @@ async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await send_image(update, context, "talk")
     personalities = {
-        'talk_linus_torvalds': "Linus Torvalds (Linux, Git)",
-        'talk_guido_van_rossum': "Guido van Rossum (Python)",
-        'talk_mark_zuckerberg': "Mark Zuckerberg (Meta, Facebook)",
+        'talk_linus_torvalds': "Linus Torvalds (Linux, Git)🐧",
+        'talk_guido_van_rossum': "Guido van Rossum (Python)🐍",
+        'talk_mark_zuckerberg': "Mark Zuckerberg (Meta, Facebook)👤",
+        'talk_gandalf': "Gandalf (Grey Wanderer)🧙‍♂",
+        'talk_andriy_titov': "Андрій Тітов (Злий Жартівник)💀",
         'start': "⬅️ Повернутись у головне меню",
     }
     await send_text_buttons(update, context, "Оберіть особистість для спілкування ...", personalities)
@@ -185,6 +191,9 @@ async def talk_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop("selected_personality", None)
         await start(update, context)
         return
+    if data == "talk":
+        await talk(update, context)
+        return
     if data.startswith("talk_"):
         context.user_data.clear()
         context.user_data["selected_personality"] = data
@@ -193,7 +202,10 @@ async def talk_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chatgpt_service.set_prompt(prompt)
         personality_name = data.replace("talk_", "").replace("_", " ").title()
         await send_image(update, context, data)
-        buttons = {'start': "⬅️ Повернутись у головне меню"}
+        buttons = {
+            'talk': "⬅️ Обрати іншу особистість",
+            'start': "⬅️ Повернутись у головне меню"
+        }
         await send_text_buttons(
             update,
             context,
