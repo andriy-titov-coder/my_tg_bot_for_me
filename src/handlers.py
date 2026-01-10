@@ -44,8 +44,8 @@ async def random(update: Update, context: ContextTypes.DEFAULT_TYPE):
             message_text="Розкажи про випадковий факт"
         )
         buttons = {
-            'random': 'Хочу ще один факт',
-            'start': 'Закінчити'
+            'random': '💡 Хочу ще один факт',
+            'start': '⬅️ Повернутись у головне меню'
         }
         await send_text_buttons(update, context, fact, buttons)
     except Exception as e:
@@ -72,7 +72,9 @@ async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
     await send_image(update, context, "gpt")
     chatgpt_service.set_prompt(load_prompt("gpt"))
-    await send_text(update, context, "Задайте питання ...")
+    buttons = {'start': '⬅️ Повернутись у головне меню'}
+    await send_text_buttons(update, context, "Задайте питання ...", buttons)
+
     context.user_data["conversation_state"] = "gpt"
 
 
@@ -83,7 +85,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_message = await send_text(update, context, "...")
         try:
             response = await chatgpt_service.add_message(message_text)
-            buttons = {'start': 'Закінчити'}
+            buttons = {'start': '⬅️ Повернутись у головне меню'}
             await send_text_buttons(update, context, response, buttons)
         except Exception as e:
             logger.error(f"Помилка при отриманні відповіді від ChatGPT: {e}")
@@ -104,7 +106,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_message = await send_text(update, context, "...")
         try:
             response = await chatgpt_service.add_message(message_text)
-            buttons = {"start": "Закінчити"}
+            buttons = {"start": "⬅️ Повернутись у головне меню"}
             personality_name = personality.replace("talk_", "").replace("_", " ").title()
             await send_text_buttons(update, context, f"{personality_name}: {response}", buttons)
         except Exception as e:
@@ -131,7 +133,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buttons = {
                 "translator_en": "English 🇺🇸",
                 "translator_uk": "Українська 🇺🇦",
-                "start": "Закінчити ❌"
+                "start": "⬅️ Повернутись у головне меню"
             }
             await send_text_buttons(update, context, translation, buttons)
         except Exception as e:
@@ -158,7 +160,7 @@ async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
         'talk_linus_torvalds': "Linus Torvalds (Linux, Git)",
         'talk_guido_van_rossum': "Guido van Rossum (Python)",
         'talk_mark_zuckerberg': "Mark Zuckerberg (Meta, Facebook)",
-        'start': "Закінчити",
+        'start': "⬅️ Повернутись у головне меню",
     }
     await send_text_buttons(update, context, "Оберіть особистість для спілкування ...", personalities)
 
@@ -189,7 +191,7 @@ async def talk_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         chatgpt_service.set_prompt(prompt)
         personality_name = data.replace("talk_", "").replace("_", " ").title()
         await send_image(update, context, data)
-        buttons = {'start': "Закінчити"}
+        buttons = {'start': "⬅️ Повернутись у головне меню"}
         await send_text_buttons(
             update,
             context,
@@ -261,7 +263,7 @@ async def translator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = {
         "translator_en": "English 🇺🇸",
         "translator_uk": "Українська 🇺🇦",
-        "start": "Закінчити ❌"
+        "start": "⬅️ Повернутись у головне меню"
     }
     await send_text_buttons(update, context, "Оберіть мову, на яку потрібно перекласти текст:", buttons)
 
