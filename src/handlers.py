@@ -133,6 +133,8 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             buttons = {
                 "translator_en": "English 🇺🇸",
                 "translator_uk": "Українська 🇺🇦",
+                "translator_zh": "Chinese 🇨🇳",
+                "translator_la": "Latin 🏛",
                 "start": "⬅️ Повернутись у головне меню"
             }
             await send_text_buttons(update, context, translation, buttons)
@@ -263,6 +265,8 @@ async def translator(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buttons = {
         "translator_en": "English 🇺🇸",
         "translator_uk": "Українська 🇺🇦",
+        "translator_zh": "Chinese 🇨🇳",
+        "translator_la": "Latin 🏛",
         "start": "⬅️ Повернутись у головне меню"
     }
     await send_text_buttons(update, context, "Оберіть мову, на яку потрібно перекласти текст:", buttons)
@@ -279,7 +283,12 @@ async def translator_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await translator(update, context)
     elif data.startswith("translator_"):
         lang_code = data.replace("translator_", "")
-        langs = {"en": "англійську", "uk": "українську"}
+        langs = {
+            "en": "англійську",
+            "uk": "українську",
+            "zh": "китайську",
+            "la": "латинську"
+        }
         context.user_data["translator_lang"] = langs.get(lang_code, lang_code)
         await send_text(update, context, f"Вибрано мову: {context.user_data['translator_lang']}. Надсилайте текст.")
 
