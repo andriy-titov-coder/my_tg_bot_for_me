@@ -64,5 +64,6 @@ async def send_text_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE, 
         chat_id=update.effective_message.chat_id,
         text=text,
         reply_markup=reply_markup,
+        parse_mode=ParseMode.HTML,
         message_thread_id=update.effective_message.message_thread_id
     )

@@ -28,7 +28,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'random': 'Дізнатися випадковий факт',
             'gpt': 'Запитати ChatGPT',
             'talk': 'Діалог з відомою особистістю',
-            'translator': 'Перекладач'
+            'translator': 'Перекладач',
+            'recommendation': 'Рекомендація від ChatGPT'
         }
     )
 
@@ -138,6 +139,10 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await send_text(update, context, "Виникла помилка при перекладі.")
         finally:
             await context.bot.delete_message(update.effective_chat.id, waiting_message.message_id)
+
+    elif conversation_state == "recommendation":
+        context.user_data["genre"] = message_text
+        await generate_recommendation(update, context)
 
     if not conversation_state:
         intent_recognized = await inter_random_input(update, context, message_text)
@@ -275,3 +280,66 @@ async def translator_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         langs = {"en": "англійську", "uk": "українську"}
         context.user_data["translator_lang"] = langs.get(lang_code, lang_code)
         await send_text(update, context, f"Вибрано мову: {context.user_data['translator_lang']}. Надсилайте текст.")
+
+
+async def recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.clear()
+    context.user_data["conversation_state"] = "recommendation"
+    await send_image(update, context, "recommendation")
+    buttons = {
+        "rec_movies": "Фільми 🎬",
+        "rec_books": "Книги 📚",
+        "rec_music": "Музика 🎵",
+        "start": "⬅️ Повернутись у головне меню"
+    }
+    await send_text_buttons(update, context, load_message("recommendation"), buttons)
+
+
+async def recommendation_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    data = query.data
+
+    if data == "start":
+        await start(update, context)
+    elif data.startswith("rec_"):
+        category = data.replace("rec_", "")
+        context.user_data["image_name"] = category 
+        
+        categories = {"movies": "фільмів", "books": "книг", "music": "музики"}
+        context.user_data["category"] = categories.get(category)
+
+        await send_image(update, context, category)
+        buttons = {'recommendation_back': '⬅️ Обрати іншу категорію'}
+        await send_text_buttons(
+            update,
+            context,
+            f"Який жанр {context.user_data['category']} вам подобається?",
+            buttons
+        )
+    elif data == "recommendation_back":
+        await recommendation(update, context)
+    elif data == "next_recommendation":
+        await generate_recommendation(update, context)
+
+
+async def generate_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    category = context.user_data.get("category")
+    genre = context.user_data.get("genre")
+
+    waiting_message = await send_text(update, context, "Думаю над рекомендацією...")
+    try:
+        prompt = load_prompt("recommendation")
+        question = f"Порекомендуй {category} у жанрі {genre}. Дай інший варіант, ніж раніше."
+        response = await chatgpt_service.send_question(prompt, question)
+
+        buttons = {
+            "next_recommendation": "Не подобається 👎",
+            "start": "⬅️ Повернутись у головне меню"
+        }
+        await send_text_buttons(update, context, response, buttons)
+    except Exception as e:
+        logger.error(f"Error in recommendation: {e}")
+        await send_text(update, context, "Помилка при створенні рекомендації.")
+    finally:
+        await context.bot.delete_message(update.effective_chat.id, waiting_message.message_id)
