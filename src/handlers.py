@@ -86,11 +86,9 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             response = await chatgpt_service.add_message(message_text)
             buttons = {
-                "talk": "⬅️ Обрати іншу особистість",
                 "start": "⬅️ Повернутись у головне меню"
             }
-            personality_name = personality.replace("talk_", "").replace("_", " ").title()
-            await send_text_buttons(update, context, f"{personality_name}: {response}", buttons)
+            await send_text_buttons(update, context, response, buttons)
         except Exception as e:
             logger.error(f"Помилка при отриманні відповіді від ChatGPT: {e}")
             await send_text(update, context, "Виникла помилка при обробці вашого повідомлення.")
