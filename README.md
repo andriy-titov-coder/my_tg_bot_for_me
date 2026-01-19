@@ -64,6 +64,12 @@ git clone https://github.com/andriy-titov-coder/my_tg_bot_for_me
 python src/bot.py
 ```
 
+**Run tests:**
+
+```bash
+python -m pytest
+```
+
 In Telegram, find your bot using the username you set up and start a chat.
 
 Available commands:
