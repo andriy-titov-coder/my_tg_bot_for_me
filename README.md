@@ -10,10 +10,9 @@ A versatile Telegram bot that integrates with OpenAI's ChatGPT to provide variou
 
 - **Random Fact Generator** - Get interesting facts with AI-generated content
 - **ChatGPT Interface** - Direct chat with OpenAI's ChatGPT
-- **Celebrity Chat** - Chat with AI personalities
-
-- Language Translator
-- Movie/Book Recommendations
+- **Celebrity Chat** - Chat with AI personalities (Linus Torvalds, Gandalf, etc.)
+- **Language Translator** - Translate text to English, Ukrainian, Chinese, Latin, and Klingon
+- **Smart Recommendations** - Personalized movie, book, and music suggestions
 
 ---
 
@@ -21,8 +20,8 @@ A versatile Telegram bot that integrates with OpenAI's ChatGPT to provide variou
 
 ### ✔ Prerequisites
 
-- Python 3.8+
-- Telegram Bot Token
+- Python 3.13+
+- Telegram Bot Token (from @BotFather)
 - OpenAI API Key
 - Required Python packages (see `requirements.txt`)
 
@@ -33,35 +32,33 @@ A versatile Telegram bot that integrates with OpenAI's ChatGPT to provide variou
 Clone the repository:
 
 ```
-git clone <https://github.com/andriy-titov-coder/my_tg_bot_for_me>
-cd my_tg_bot_for_me
-```
+git clone https://github.com/andriy-titov-coder/my_tg_bot_for_me
+   cd my_tg_bot_for_me
+   ```
 
-Create and activate a virtual environment:
+2. **Create and activate a virtual environment:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
 
-```
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Create a `.env` file in the project root and add your tokens:
-
-```
-TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-OPENAI_API_KEY=your_openai_api_key
-```
+4. **Configuration:**
+   Create a `.env` file in the project root and add your tokens:
+   ```env
+   BOT_TOKEN=your_telegram_bot_token
+   CHATGPT_TOKEN=your_openai_api_key
+   ```
 
 ---
 
 ### ✔ Usage
 
-Start the bot:
+**Start the bot:**
 
 ```bash
 python src/bot.py
@@ -86,32 +83,23 @@ Available commands:
 
 ```
 my_tg_bot_for_me
-├── .env.example         # Example environment variables
-├── .gitignore           # Git ignore file
-├── README.md            # This file
+├── .env                 # Environment variables (private)
+├── .gitignore           # Git ignore rules
+├── pytest.ini           # Pytest configuration
+├── README.md            # Project documentation
 ├── requirements.txt     # Project dependencies
-└── src/
-    ├── bot.py           # Main bot application
-    ├── config.py        # Configuration settings
-    ├── gpt.py           # GPT integration module
-    ├── handlers.py      # Bot command handlers
-    ├── utils.py         # Utility functions
-    └── resources/       # Resource files
-        ├── images/      # Image assets for the bot
-        ├── messages/    # Message templates
-        │   ├── recommendation.txt
-        │   └── start.txt
-        └── prompts/     # AI prompt templates
-            ├── gpt.txt
-            ├── random.txt
-            ├── recomendation.txt
-            ├── talk_andriy_titov.txt
-            ├── talk_gandalf.txt
-            ├── talk_guido_van_rossum.txt
-            ├── talk_linus_torvalds.txt
-            ├── talk_mark_zuckerberg.txt
-            └── translator.txt
-```
+├── src/
+│   ├── __init__.py
+│   ├── bot.py           # Application entry point
+│   ├── config.py        # Config & Env loader
+│   ├── gpt.py           # OpenAI API logic
+│   ├── handlers.py      # Telegram command handlers
+│   ├── utils.py         # Helper functions
+│   └── resources/       # Assets (images, prompts, messages)
+└── tests/               # Automated tests
+    ├── __init__.py
+    ├── test_gpt.py      # Tests for GPT service
+    └── test_utils.py    # Tests for utility functions
 
 ---
 
