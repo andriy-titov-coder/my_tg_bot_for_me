@@ -1,3 +1,7 @@
+"""
+Main entry point for the Telegram bot.
+Initializes the bot and registers all command and callback handlers.
+"""
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,

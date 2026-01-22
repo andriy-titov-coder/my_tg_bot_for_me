@@ -1,3 +1,6 @@
+"""
+Utility functions for the Telegram bot, including message loading, sending text/images, and menu management.
+"""
 import os
 from telegram.ext import ContextTypes
 from telegram.constants import ParseMode
@@ -6,6 +9,9 @@ from telegram import (Update, BotCommand, BotCommandScopeChat, MenuButtonCommand
 
 
 def load_message(name: str) -> str:
+    """
+    Loads a message template from the resources/messages directory.
+    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     message_path = os.path.join(current_dir, 'resources', 'messages', f'{name}.txt')
     with open(message_path, "r", encoding="utf-8") as file:
@@ -13,6 +19,9 @@ def load_message(name: str) -> str:
 
 
 async def send_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str):
+    """
+    Sends a Markdown-formatted text message to the user.
+    """
     text = text.encode('utf8').decode('utf8')
     return await context.bot.send_message(
         chat_id=update.effective_chat.id,
@@ -22,6 +31,9 @@ async def send_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text: st
 
 
 async def send_image(update: Update, context: ContextTypes.DEFAULT_TYPE, name: str):
+    """
+    Sends a photo from the resources/images directory to the user.
+    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     image_path = os.path.join(current_dir, 'resources', 'images', f'{name}.jpg')
     with open(image_path, 'rb') as image:
@@ -32,6 +44,9 @@ async def send_image(update: Update, context: ContextTypes.DEFAULT_TYPE, name: s
 
 
 async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, commands: dict):
+    """
+    Sets up the bot's command menu for the current chat.
+    """
     command_list = [
         BotCommand(command=key, description=value)
         for key, value in commands.items()
@@ -47,6 +62,9 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, com
 
 
 def load_prompt(name: str):
+    """
+    Loads a prompt template from the resources/prompts directory.
+    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     prompt_path = os.path.join(current_dir, 'resources', 'prompts', f'{name}.txt')
     with open(prompt_path, "r", encoding="utf-8") as file:
@@ -54,6 +72,9 @@ def load_prompt(name: str):
 
 
 async def send_text_buttons(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, buttons: dict):
+    """
+    Sends a text message with inline keyboard buttons.
+    """
     text = text.encode('utf8', errors='surrogatepass').decode('utf8')
     keyboard = []
     for key, value in buttons.items():

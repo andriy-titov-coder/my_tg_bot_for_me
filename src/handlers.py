@@ -1,3 +1,6 @@
+"""
+Command and callback handlers for the Telegram bot.
+"""
 import logging
 from random import choice
 
@@ -22,6 +25,9 @@ logger = logging.getLogger(__name__)
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /start command. Displays the welcome message and main menu.
+    """
     logger.info(f"Користувач {update.effective_user.id} запустив бот")
     await send_image(update, context, "start")
     await send_text(update, context, load_message("start"))
@@ -40,6 +46,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def random(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /random command. Fetches and displays a random fact using GPT.
+    """
     logger.info(f"Користувач {update.effective_user.id} обрав режим випадкового факту")
     await send_image(update, context, "random")
     message_to_delete = await send_text(update, context, "Шукаю випадковий факт ...")
@@ -65,6 +74,9 @@ async def random(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def random_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """
+    Handles callback queries for the random fact feature.
+    """
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -76,6 +88,9 @@ async def random_button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /gpt command. Initiates ChatGPT conversation mode.
+    """
     logger.info(f"Користувач {update.effective_user.id} вибрав режим GPT")
     context.user_data.clear()
     await send_image(update, context, "gpt")
@@ -87,6 +102,9 @@ async def gpt(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles all incoming text messages based on the current conversation state.
+    """
     message_text = update.message.text
     conversation_state = context.user_data.get("conversation_state")
     logger.info(f"Користувач {update.effective_user.id} надіслав повідомлення у стані {conversation_state}: {message_text[:50]}...")
@@ -168,6 +186,9 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /talk command. Displays the list of available celebrities to chat with.
+    """
     logger.info(f"Користувач {update.effective_user.id} відкрив меню вибору особистостей")
     context.user_data.clear()
     await send_image(update, context, "talk")
@@ -183,6 +204,9 @@ async def talk(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def gpt_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles callback queries for the GPT mode.
+    """
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -193,6 +217,9 @@ async def gpt_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def talk_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles callback queries for the celebrity chat mode (talk).
+    """
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -228,6 +255,9 @@ async def talk_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def inter_random_input(update: Update, context: ContextTypes.DEFAULT_TYPE, message_text):
+    """
+    Analyzes user intent to automatically switch modes based on message content.
+    """
     message_text_lower = message_text.lower()
     logger.info(f"Аналіз інтенту для повідомлення: {message_text_lower[:30]}...")
     if any(keyword in message_text_lower for keyword in ['факт', 'цікав', 'random', 'випадков']):
@@ -260,6 +290,9 @@ async def inter_random_input(update: Update, context: ContextTypes.DEFAULT_TYPE,
 
 
 async def show_funny_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Sends a funny AI-generated response when the user's intent is unclear.
+    """
     logger.info(f"Користувач {update.effective_user.id} надіслав невідому команду, надсилаю жартівливу відповідь")
     funny_responses = [
         "Хмм... Цікаво, але я не зрозумів, що саме ви хочете. Може спробуєте одну з команд з меню?",
@@ -283,6 +316,9 @@ async def show_funny_response(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 async def translator(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /translator command. Displays language selection for translation.
+    """
     logger.info(f"Користувач {update.effective_user.id} відкрив режим перекладача")
     context.user_data.clear()
     context.user_data["conversation_state"] = "translator"
@@ -300,6 +336,9 @@ async def translator(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def translator_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles callback queries for the translator mode.
+    """
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -323,6 +362,9 @@ async def translator_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles the /recommendation command. Displays categories for ChatGPT recommendations.
+    """
     logger.info(f"Користувач {update.effective_user.id} відкрив режим рекомендацій")
     context.user_data.clear()
     context.user_data["conversation_state"] = "recommendation"
@@ -337,6 +379,9 @@ async def recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def recommendation_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handles callback queries for the recommendation mode.
+    """
     query = update.callback_query
     await query.answer()
     data = query.data
@@ -366,6 +411,9 @@ async def recommendation_button(update: Update, context: ContextTypes.DEFAULT_TY
 
 
 async def generate_recommendation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Generates a personalized recommendation using GPT based on selected category and genre.
+    """
     category = context.user_data.get("category")
     genre = context.user_data.get("genre")
     logger.info(f"Генерація рекомендації для {update.effective_user.id}: {category}, жанр: {genre}")
